@@ -40,6 +40,13 @@ const Payment = () => {
 
   const handlePayment = () => {
     if (selectedPayment) {
+      // Save payment details for receipt
+      const paymentData = {
+        amount: orderTotal,
+        method: selectedPayment,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem("paymentData", JSON.stringify(paymentData));
       navigate("/confirmation");
     }
   };

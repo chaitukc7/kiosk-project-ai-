@@ -15,6 +15,7 @@ const Confirmation = () => {
     const customerName = localStorage.getItem("userName"); // Changed from customerName to userName
     const seatNumber = localStorage.getItem("seatNumber");
     const orderType = localStorage.getItem("orderType");
+    const paymentData = localStorage.getItem("paymentData");
     
     if (savedOrderData) {
       const data = JSON.parse(savedOrderData);
@@ -23,14 +24,16 @@ const Confirmation = () => {
         cart: savedCart ? JSON.parse(savedCart) : {},
         customerName: customerName || "Guest",
         seatNumber: seatNumber || "N/A",
-        orderType: orderType || "Pick Up"
+        orderType: orderType || "Pick Up",
+        payment: paymentData ? JSON.parse(paymentData) : null
       });
     } else {
       setOrderData({
         cart: savedCart ? JSON.parse(savedCart) : {},
         customerName: customerName || "Guest",
         seatNumber: seatNumber || "N/A",
-        orderType: orderType || "Pick Up"
+        orderType: orderType || "Pick Up",
+        payment: paymentData ? JSON.parse(paymentData) : null
       });
     }
 
@@ -60,14 +63,17 @@ const Confirmation = () => {
     ];
 
     let orderItems = '';
-    let subtotal = 0;
+    
+    // Use payment amount instead of recalculating
+    const total = orderData?.payment?.amount || 0;
+    const subtotal = total / 1.1; // Remove GST to get subtotal
+    const gst = total - subtotal;
     
     if (orderData?.cart) {
       Object.entries(orderData.cart).forEach(([itemId, quantity]: [string, any]) => {
         const menuItem = menuItems.find(item => item.id === itemId);
         if (menuItem) {
           const itemTotal = menuItem.price * quantity;
-          subtotal += itemTotal;
           orderItems += `
             <tr>
               <td style="padding: 8px 0;">${menuItem.name}</td>
@@ -79,9 +85,6 @@ const Confirmation = () => {
         }
       });
     }
-
-    const gst = subtotal * 0.10;
-    const total = subtotal + gst;
 
     const receiptHTML = `
       <!DOCTYPE html>
@@ -191,6 +194,7 @@ const Confirmation = () => {
     localStorage.removeItem("userPhone");
     localStorage.removeItem("seatNumber");
     localStorage.removeItem("orderType");
+    localStorage.removeItem("paymentData");
     navigate("/");
   };
 
