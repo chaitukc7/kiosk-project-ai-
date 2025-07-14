@@ -30,6 +30,14 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [selectedAddOns, setSelectedAddOns] = useState<{[key: string]: number}>({});
 
+  const menuItems = [
+    { id: "1", name: "Udon", price: 13.80 },
+    { id: "2", name: "Ramen", price: 13.80 },
+    { id: "3", name: "Pad Thai", price: 13.80 },
+    { id: "4", name: "Spaghetti Bolognese", price: 13.80 },
+    { id: "5", name: "Pho", price: 13.80 }
+  ];
+
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
@@ -37,11 +45,12 @@ const Cart = () => {
       // Convert to cart items format
       const items: CartItem[] = [];
       Object.entries(cart).forEach(([itemId, quantity]) => {
-        if (itemId === "2") { // Ramen
+        const menuItem = menuItems.find(item => item.id === itemId);
+        if (menuItem) {
           items.push({
             id: itemId,
-            name: "Ramen",
-            price: 13.80,
+            name: menuItem.name,
+            price: menuItem.price,
             quantity: quantity as number,
             size: "Large",
             addons: ["Beef", "Chilly Sauce x1", "Chilly flakes x1"]
@@ -219,7 +228,7 @@ const Cart = () => {
             onClick={handleCheckout}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 text-lg font-semibold rounded-lg"
           >
-            1 ITEMS | ${getTotal().toFixed(2)} CHECKOUT
+            {cartItems.reduce((sum, item) => sum + item.quantity, 0)} ITEMS | ${getTotal().toFixed(2)} CHECKOUT
           </Button>
         </div>
 
