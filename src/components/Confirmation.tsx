@@ -12,7 +12,7 @@ const Confirmation = () => {
     // Load order data from localStorage
     const savedOrderData = localStorage.getItem("orderData");
     const savedCart = localStorage.getItem("cart");
-    const customerName = localStorage.getItem("customerName");
+    const customerName = localStorage.getItem("userName"); // Changed from customerName to userName
     const seatNumber = localStorage.getItem("seatNumber");
     const orderType = localStorage.getItem("orderType");
     
@@ -132,7 +132,7 @@ const Confirmation = () => {
           
           <div class="order-info">
             <p><strong>Customer:</strong> ${orderData?.customerName || 'Guest'}</p>
-            <p><strong>Seat Number:</strong> ${orderData?.seatNumber || 'N/A'}</p>
+            ${orderData?.orderType === 'Dine In' ? `<p><strong>Seat Number:</strong> ${orderData?.seatNumber || 'N/A'}</p>` : ''}
             <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
             <p><strong>Time:</strong> ${new Date().toLocaleTimeString()}</p>
             <p><strong>Order Type:</strong> ${orderData?.orderType || 'Pick Up'}</p>
@@ -187,7 +187,8 @@ const Confirmation = () => {
     localStorage.removeItem("cart");
     localStorage.removeItem("orderData");
     localStorage.removeItem("personalData");
-    localStorage.removeItem("customerName");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userPhone");
     localStorage.removeItem("seatNumber");
     localStorage.removeItem("orderType");
     navigate("/");
