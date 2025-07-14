@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { ShoppingBag, UtensilsCrossed } from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [showSeatSelection, setShowSeatSelection] = useState(false);
+  const [selectedSeat, setSelectedSeat] = useState("");
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
@@ -47,7 +52,7 @@ const Home = () => {
               Select items from menu and add to cart
             </p>
             <Button
-              onClick={() => navigate("/menu?type=dinein")}
+              onClick={() => setShowSeatSelection(true)}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 text-lg font-semibold rounded-lg"
             >
               Get Started
@@ -62,6 +67,39 @@ const Home = () => {
           </p>
         </div>
       </div>
+      
+      <Dialog open={showSeatSelection} onOpenChange={setShowSeatSelection}>
+        <DialogContent className="bg-slate-800 border-slate-600 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">Select Your Seat</DialogTitle>
+          </DialogHeader>
+          <div className="p-6">
+            <div className="mb-6">
+              <label className="block text-white mb-2">Seat Number</label>
+              <Input
+                type="text"
+                value={selectedSeat}
+                onChange={(e) => setSelectedSeat(e.target.value)}
+                placeholder="Enter seat number (e.g., A1, B5)"
+                className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+              />
+            </div>
+            <Button
+              onClick={() => {
+                if (selectedSeat.trim()) {
+                  localStorage.setItem("seatNumber", selectedSeat);
+                  setShowSeatSelection(false);
+                  navigate("/menu?type=dinein");
+                }
+              }}
+              disabled={!selectedSeat.trim()}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 text-lg font-semibold rounded-lg"
+            >
+              Continue to Menu
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -25,28 +25,16 @@ const Payment = () => {
 
   const paymentOptions: PaymentOption[] = [
     {
-      id: "cash",
-      name: "Cash",
-      icon: <Banknote className="w-6 h-6 text-green-500" />,
-      amount: "$57.50"
-    },
-    {
       id: "credit",
       name: "Credit",
       icon: <CreditCard className="w-6 h-6 text-blue-500" />,
-      amount: "$57.50"
+      amount: `$${orderTotal.toFixed(2)}`
     },
     {
       id: "debit",
       name: "Debit",
       icon: <CreditCard className="w-6 h-6 text-purple-500" />,
-      amount: "$57.50"
-    },
-    {
-      id: "split",
-      name: "Split",
-      icon: <Utensils className="w-6 h-6 text-orange-500" />,
-      amount: "$57.50"
+      amount: `$${orderTotal.toFixed(2)}`
     }
   ];
 

@@ -82,7 +82,7 @@ const Cart = () => {
       total: getTotal()
     };
     localStorage.setItem("orderData", JSON.stringify(orderData));
-    navigate("/personal-details");
+    navigate("/payment");
   };
 
   return (

@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [name, setName] = useState("");
   const navigate = useNavigate();
 
   const handleSignIn = () => {
-    if (phoneNumber.trim()) {
+    if (phoneNumber.trim() && name.trim()) {
       // Store user info and navigate to home
       localStorage.setItem("userPhone", phoneNumber);
+      localStorage.setItem("userName", name);
       navigate("/home");
     }
   };
@@ -33,6 +35,17 @@ const SignIn = () => {
           
           <div className="space-y-6">
             <div>
+              <label className="block text-white mb-2">Name</label>
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+              />
+            </div>
+            
+            <div>
               <label className="block text-white mb-2">Phone Number</label>
               <div className="flex">
                 <span className="bg-slate-700 text-white px-3 py-3 rounded-l-md border border-slate-600">
@@ -50,7 +63,7 @@ const SignIn = () => {
             
             <Button
               onClick={handleSignIn}
-              disabled={!phoneNumber.trim()}
+              disabled={!phoneNumber.trim() || !name.trim()}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 text-lg font-semibold rounded-lg"
             >
               SIGN IN
