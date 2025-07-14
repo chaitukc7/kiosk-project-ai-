@@ -225,10 +225,10 @@ const Confirmation = () => {
           </div>
         </div>
 
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4 mb-8 max-w-md mx-auto">
           <Button
             onClick={handlePrintReceipt}
-            className="w-full max-w-md bg-blue-600 hover:bg-blue-700 text-white py-4 text-lg font-semibold rounded-lg flex items-center justify-center gap-2"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 text-lg font-semibold rounded-lg flex items-center justify-center gap-2"
           >
             <Printer size={20} />
             Print Receipt
@@ -236,7 +236,7 @@ const Confirmation = () => {
           
           <Button
             onClick={handleStartNewOrder}
-            className="w-full max-w-md bg-orange-500 hover:bg-orange-600 text-white py-4 text-lg font-semibold rounded-lg"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 text-lg font-semibold rounded-lg"
           >
             Start New Order
           </Button>
