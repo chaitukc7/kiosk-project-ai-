@@ -14,6 +14,7 @@ const Confirmation = () => {
     const savedCart = localStorage.getItem("cart");
     const customerName = localStorage.getItem("customerName");
     const seatNumber = localStorage.getItem("seatNumber");
+    const orderType = localStorage.getItem("orderType");
     
     if (savedOrderData) {
       const data = JSON.parse(savedOrderData);
@@ -21,7 +22,15 @@ const Confirmation = () => {
         ...data,
         cart: savedCart ? JSON.parse(savedCart) : {},
         customerName: customerName || "Guest",
-        seatNumber: seatNumber || "N/A"
+        seatNumber: seatNumber || "N/A",
+        orderType: orderType || "Pick Up"
+      });
+    } else {
+      setOrderData({
+        cart: savedCart ? JSON.parse(savedCart) : {},
+        customerName: customerName || "Guest",
+        seatNumber: seatNumber || "N/A",
+        orderType: orderType || "Pick Up"
       });
     }
 
@@ -126,7 +135,7 @@ const Confirmation = () => {
             <p><strong>Seat Number:</strong> ${orderData?.seatNumber || 'N/A'}</p>
             <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
             <p><strong>Time:</strong> ${new Date().toLocaleTimeString()}</p>
-            <p><strong>Order Type:</strong> ${orderData?.orderType || 'Dine In'}</p>
+            <p><strong>Order Type:</strong> ${orderData?.orderType || 'Pick Up'}</p>
           </div>
 
           <table>
@@ -178,6 +187,9 @@ const Confirmation = () => {
     localStorage.removeItem("cart");
     localStorage.removeItem("orderData");
     localStorage.removeItem("personalData");
+    localStorage.removeItem("customerName");
+    localStorage.removeItem("seatNumber");
+    localStorage.removeItem("orderType");
     navigate("/");
   };
 

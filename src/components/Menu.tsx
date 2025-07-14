@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Plus, Search } from "lucide-react";
 
 interface MenuItem {
@@ -65,9 +65,18 @@ const categories = [
 
 const Menu = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("noodles");
   const [cart, setCart] = useState<{[key: string]: number}>({});
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    // Save order type from URL parameter
+    const orderType = searchParams.get('type');
+    if (orderType) {
+      localStorage.setItem("orderType", orderType === 'pickup' ? 'Pick Up' : 'Dine In');
+    }
+  }, [searchParams]);
 
   const addToCart = (itemId: string) => {
     setCart(prev => ({
