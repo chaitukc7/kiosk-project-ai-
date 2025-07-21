@@ -42,7 +42,7 @@ const menuItems: MenuItem[] = [
     id: "4",
     name: "Spaghetti Bolognese",
     price: 13.80,
-    description: "Thick, chewy Japanese wheat noodles often served in a clear broth or stir-fried.",
+    description: "Thick, Japanese wheat noodles often served in a clear broth or stir-fried.",
     image: "/api/placeholder/100/100",
     category: "noodles"
   },
