@@ -66,8 +66,9 @@ const Confirmation = () => {
     
     // Use payment amount instead of recalculating
     const total = orderData?.payment?.amount || 0;
+    const discount = orderData?.discount || 0;
     const subtotal = total / 1.1; // Remove GST to get subtotal
-    const gst = total - subtotal;
+    const tax = total - subtotal;
     
     if (orderData?.cart) {
       Object.entries(orderData.cart).forEach(([itemId, quantity]: [string, any]) => {
@@ -162,8 +163,12 @@ const Confirmation = () => {
                 <td style="text-align: right;">$${subtotal.toFixed(2)}</td>
               </tr>
               <tr>
-                <td>GST (10%):</td>
-                <td style="text-align: right;">$${gst.toFixed(2)}</td>
+                <td>Discount:</td>
+                <td style="text-align: right;">-$${discount.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td>Tax (10%):</td>
+                <td style="text-align: right;">$${tax.toFixed(2)}</td>
               </tr>
               <tr class="total-line">
                 <td><strong>TOTAL:</strong></td>

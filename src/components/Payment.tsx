@@ -38,7 +38,7 @@ const Payment = () => {
     }
   ];
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (selectedPayment) {
       // Save payment details for receipt
       const paymentData = {
@@ -47,7 +47,70 @@ const Payment = () => {
         timestamp: new Date().toISOString()
       };
       localStorage.setItem("paymentData", JSON.stringify(paymentData));
-      navigate("/confirmation");
+
+      // Gather all data for backend
+      let user = JSON.parse(localStorage.getItem("personalData") || '{}');
+      if (!user.name) user.name = localStorage.getItem("userName") || "Guest";
+      if (!user.phone) user.phone = localStorage.getItem("userPhone") || "";
+
+      // Fix order/addOns structure
+      let order = JSON.parse(localStorage.getItem("orderData") || '{}');
+      // Ensure order.items is an array of objects with id, name, quantity, price
+      if (order.items && Array.isArray(order.items)) {
+        order.items = order.items.map(item => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        }));
+      } else {
+        order.items = [];
+      }
+      // Convert addOns from {id: quantity} to array of objects
+      if (order.addOns && typeof order.addOns === 'object' && !Array.isArray(order.addOns)) {
+        const addOnDefs = [
+          { id: "pepsi", name: "Pepsi", price: 3.00 },
+          { id: "fries", name: "Fries", price: 5.00 },
+          { id: "sauce", name: "Sauce", price: 8.00 },
+          { id: "cocacola", name: "CocaCola", price: 8.00 }
+        ];
+        order.addOns = Object.entries(order.addOns)
+          .filter(([id, quantity]) => Number(quantity) > 0)
+          .map(([id, quantity]) => {
+            const def = addOnDefs.find(a => a.id === id) || { id, name: id, price: 0 };
+            return {
+              id,
+              name: def.name,
+              quantity: Number(quantity),
+              price: def.price
+            };
+          });
+      } else if (!Array.isArray(order.addOns)) {
+        order.addOns = [];
+      }
+
+      const payment = paymentData;
+      let seatNumber = localStorage.getItem("seatNumber");
+      const orderType = localStorage.getItem("orderType");
+      // Only include seatNumber for Dine In
+      if (orderType !== 'Dine In') seatNumber = null;
+      const payload = { user, order, payment, seatNumber, orderType };
+      console.log("Sending payload to backend:", payload);
+
+      try {
+        const res = await fetch("http://localhost:5001/transaction", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          navigate("/confirmation");
+        } else {
+          alert("Failed to save transaction. Please try again.");
+        }
+      } catch (err) {
+        alert("Error connecting to backend.");
+      }
     }
   };
 
