@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { ShoppingBag, UtensilsCrossed } from "lucide-react";
+import NovaAIChatbot from "@/components/NovaAIChatbot";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -100,6 +101,9 @@ const Home = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Chatbot floating button/component */}
+      <NovaAIChatbot />
     </div>
   );
 };
