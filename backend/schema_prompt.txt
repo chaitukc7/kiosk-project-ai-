@@ -1,0 +1,77 @@
+Database schema for kiosk ordering system:
+
+Table: users
+- id (INT, PRIMARY KEY, AUTO_INCREMENT)
+- name (VARCHAR(100), NOT NULL)
+- phone (VARCHAR(20), UNIQUE)
+
+Table: transactions
+- id (INT, PRIMARY KEY, AUTO_INCREMENT)
+- user_id (INT, FOREIGN KEY references users.id)
+- seat_number (VARCHAR(10))
+- order_type (VARCHAR(20)) - values: 'Dine In', 'Pick Up'
+- total (DECIMAL(10,2), NOT NULL)
+- payment_method (VARCHAR(20))
+- payment_time (DATETIME)
+
+Table: order_items
+- id (INT, PRIMARY KEY, AUTO_INCREMENT)
+- transaction_id (INT, FOREIGN KEY references transactions.id)
+- item_id (VARCHAR(20))
+- name (VARCHAR(100))
+- quantity (INT)
+- price (DECIMAL(10,2))
+
+Table: add_ons
+- id (INT, PRIMARY KEY, AUTO_INCREMENT)
+- transaction_id (INT, FOREIGN KEY references transactions.id)
+- add_on_id (VARCHAR(20))
+- name (VARCHAR(100))
+- quantity (INT)
+- price (DECIMAL(10,2))
+
+Relationships:
+- transactions.user_id -> users.id
+- order_items.transaction_id -> transactions.id
+- add_ons.transaction_id -> transactions.id
+
+Query patterns and guidelines:
+- For sales analysis: Use SUM(quantity) with GROUP BY name to aggregate item sales
+- For revenue analysis: Use SUM(total) from transactions table
+- For "best/least selling items" without time period: Do NOT add date filters, use all data
+- For "best/least selling items this week/month": Add appropriate date filters
+- For revenue without time period: Do NOT add date filters, use all data
+- For revenue with time period (this week, last month, etc.): Add appropriate date filters
+- IMPORTANT: Only add date filters when the question specifically mentions a time period (today, yesterday, this week, last month, etc.)
+- For general questions like "best selling items" or "top three items" without time period: Use simple queries without date filters
+- CRITICAL: If the question does NOT mention a specific time period, do NOT add any WHERE clauses with dates
+- For "least selling item" without time period: Use "SELECT name, SUM(quantity) as total FROM order_items GROUP BY name ORDER BY total ASC LIMIT 1"
+- For "best selling item" without time period: Use "SELECT name, SUM(quantity) as total FROM order_items GROUP BY name ORDER BY total DESC LIMIT 1"
+- For customer analysis: Use COUNT(DISTINCT user_id) to count unique customers
+- For customer count queries: Use "SELECT COUNT(DISTINCT t.user_id) FROM transactions t WHERE [date condition]"
+- For customer spending queries: Use "SELECT u.name, SUM(t.total) as total_spent FROM transactions t JOIN users u ON t.user_id = u.id WHERE [date condition] GROUP BY u.id, u.name ORDER BY total_spent DESC"
+- For date filtering: Use DATE(payment_time), YEARWEEK(payment_time), MONTH(payment_time), YEAR(payment_time)
+- For order type analysis: Use GROUP BY order_type with COUNT(*)
+- For customer order counts: JOIN users with transactions and use HAVING clause
+- For low/high sales: Use HAVING SUM(quantity) < X or ORDER BY SUM(quantity) ASC/DESC
+- For tax calculations: Multiply total by 0.10 (10% tax rate)
+- For time periods: Use CURDATE(), DATE_SUB(), YEARWEEK() functions
+- For "last month": Use MONTH(payment_time) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(payment_time) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+- CRITICAL: DO NOT use DATE(payment_time) >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) for "last month" queries
+- CRITICAL: NEVER use BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 MONTH) AND CURDATE() for "last month" queries
+- "Last month" means ONLY the previous calendar month, not the last 30 days
+- Example for "last month": WHERE MONTH(payment_time) = 6 AND YEAR(payment_time) = 2025 (if current month is July 2025)
+- For "yesterday": Use DATE(payment_time) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+- For "this week": Use YEARWEEK(payment_time) = YEARWEEK(CURDATE())
+- For "this month": Use MONTH(payment_time) = MONTH(CURDATE()) AND YEAR(payment_time) = YEAR(CURDATE())
+- For ranking: Use ORDER BY with LIMIT for top/bottom items
+- For best selling: ORDER BY SUM(quantity) DESC
+- For least selling: ORDER BY SUM(quantity) ASC
+- For add-ons queries: Use add_ons table with JOIN to transactions for date filtering
+
+Important notes:
+- Always use table aliases when joining (e.g., FROM add_ons a JOIN transactions t)
+- For date filtering, use DATE(payment_time) = CURDATE() for today
+- For add-ons queries, always join with transactions table to get date information
+- Use SUM(quantity) to get total sales, not COUNT(*)
+- Always include GROUP BY when using aggregate functions like SUM() 

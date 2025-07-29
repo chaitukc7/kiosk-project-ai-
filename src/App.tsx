@@ -12,6 +12,7 @@ import Cart from "./components/Cart";
 import PersonalDetails from "./components/PersonalDetails";
 import Payment from "./components/Payment";
 import Confirmation from "./components/Confirmation";
+import NovaAIChatbot from "./components/NovaAIChatbot";
 
 const queryClient = new QueryClient();
 
@@ -29,9 +30,10 @@ const App = () => (
           
           <Route path="/payment" element={<Payment />} />
           <Route path="/confirmation" element={<Confirmation />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          {}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <NovaAIChatbot />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

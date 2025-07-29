@@ -104,7 +104,7 @@ const Payment = () => {
           body: JSON.stringify(payload)
         });
         if (res.ok) {
-          navigate("/confirmation");
+      navigate("/confirmation");
         } else {
           alert("Failed to save transaction. Please try again.");
         }
