@@ -13,14 +13,15 @@ Date: 2025
 
 import mysql.connector
 import re
+import os
 from typing import Optional, List, Tuple, Any
 
 # Database configuration
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'admin123',
-    'database': 'kiosk',
+    'host': os.getenv("MYSQL_HOST", "localhost"),
+    'user': os.getenv("MYSQL_USER", "root"),
+    'password': os.getenv("MYSQL_PASSWORD", "admin123"),
+    'database': os.getenv("MYSQL_DATABASE", "kiosk"),
     'autocommit': True
 }
 

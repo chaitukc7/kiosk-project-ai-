@@ -18,7 +18,7 @@ import os
 # MySQL connection settings - same as in app.py
 # Update the password below with your MySQL root password
 MYSQL_CONFIG = {
-    'host': 'localhost',
+    'host': 'mysql',
     'user': 'root',
     'password': 'admin123',  # CHANGE THIS TO YOUR MYSQL PASSWORD
     'database': 'kiosk'

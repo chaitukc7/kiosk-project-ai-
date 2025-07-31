@@ -1,0 +1,273 @@
+# =============================================================================
+# DOCKER COMPOSE CONFIGURATION FOR SMART KIOSK SYSTEM
+# =============================================================================
+# This file orchestrates all microservices for the kiosk application:
+# - Database (MySQL) for data persistence
+# - Backend services (Flask) for business logic
+# - Frontend (React + Nginx) for user interface
+# - AI service (Ollama) for Mistral LLM integration
+# =============================================================================
+
+services:
+  # =============================================================================
+  # DATABASE SERVICE
+  # =============================================================================
+  # MySQL database for storing all application data:
+  # - User accounts and authentication
+  # - Menu items and categories
+  # - Orders and transactions
+  # - Payment records
+  # =============================================================================
+  mysql:
+    image: mysql:8.0
+    container_name: kiosk-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: kiosk
+    ports:
+      - "3307:3306"  # Exposed on 3307 to avoid conflicts with local MySQL
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persistent data storage
+      - ./kiosk_schema.sql:/docker-entrypoint-initdb.d/kiosk_schema.sql  # Auto-load schema
+    networks:
+      - kiosk-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-padmin123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # =============================================================================
+  # OLLAMA AI SERVICE (MISTRAL LLM)
+  # =============================================================================
+  # Ollama provides local LLM inference for the AI chatbot:
+  # - Runs Mistral 7B model for natural language processing
+  # - Requires significant memory (12GB+ recommended)
+  # - Automatically downloads Mistral model on first startup
+  # =============================================================================
+  ollama:
+    image: ollama/ollama:latest
+    container_name: kiosk-ollama
+    ports:
+      - "11434:11434"  # Ollama API endpoint
+    volumes:
+      - ollama_data:/root/.ollama  # Persistent model storage
+    mem_limit: 12g      # Maximum memory allocation
+    mem_reservation: 8g # Guaranteed memory reservation
+    shm_size: 4g        # Shared memory for model loading
+    networks:
+      - kiosk-network
+
+  # =============================================================================
+  # AUTHENTICATION SERVICE
+  # =============================================================================
+  # Handles user registration, login, and JWT token management:
+  # - User registration with password hashing
+  # - JWT token generation and validation
+  # - User profile management
+  # =============================================================================
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: kiosk-auth-service
+    ports:
+      - "5004:5004"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=admin123
+      - MYSQL_DATABASE=kiosk
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - kiosk-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =============================================================================
+  # MENU SERVICE
+  # =============================================================================
+  # Manages menu items, categories, and pricing:
+  # - Menu item CRUD operations
+  # - Category management
+  # - Price updates and inventory tracking
+  # =============================================================================
+  menu-service:
+    build:
+      context: ./services/menu-service
+      dockerfile: Dockerfile
+    container_name: kiosk-menu-service
+    ports:
+      - "5003:5003"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=admin123
+      - MYSQL_DATABASE=kiosk
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - kiosk-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =============================================================================
+  # ORDER SERVICE
+  # =============================================================================
+  # Processes orders and manages transactions:
+  # - Order creation and management
+  # - Transaction processing
+  # - Order status tracking
+  # =============================================================================
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    container_name: kiosk-order-service
+    ports:
+      - "5002:5002"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=admin123
+      - MYSQL_DATABASE=kiosk
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - kiosk-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =============================================================================
+  # PAYMENT SERVICE
+  # =============================================================================
+  # Handles payment processing and payment methods:
+  # - Payment method management
+  # - Payment processing
+  # - Payment status tracking
+  # =============================================================================
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+    container_name: kiosk-payment-service
+    ports:
+      - "5006:5006"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=admin123
+      - MYSQL_DATABASE=kiosk
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - kiosk-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =============================================================================
+  # LLM SERVICE (AI CHATBOT & REPORTS)
+  # =============================================================================
+  # Provides AI chatbot functionality and PDF report generation:
+  # - Natural language query processing
+  # - PDF report generation (daily, weekly, monthly)
+  # - Integration with Ollama for LLM inference
+  # =============================================================================
+  llm-service:
+    build:
+      context: ./services/llm-service
+      dockerfile: Dockerfile
+    container_name: kiosk-llm-service
+    ports:
+      - "5005:5005"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=admin123
+      - MYSQL_DATABASE=kiosk
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - kiosk-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =============================================================================
+  # FRONTEND SERVICE
+  # =============================================================================
+  # React application served by Nginx:
+  # - User interface for kiosk operations
+  # - API proxy configuration for backend services
+  # - Static file serving and routing
+  # =============================================================================
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: kiosk-frontend
+    ports:
+      - "8081:80"  # Exposed on 8081 to avoid conflicts
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      menu-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+      llm-service:
+        condition: service_healthy
+    networks:
+      - kiosk-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+# Persistent data storage for database and AI models
+volumes:
+  mysql_data:    # MySQL database files
+  ollama_data:   # Ollama models and data
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+# Internal network for service communication
+networks:
+  kiosk-network:
+    driver: bridge 

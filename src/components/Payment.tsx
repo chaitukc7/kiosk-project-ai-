@@ -50,11 +50,27 @@ const Payment = () => {
 
       // Gather all data for backend
       let user = JSON.parse(localStorage.getItem("personalData") || '{}');
-      if (!user.name) user.name = localStorage.getItem("userName") || "Guest";
-      if (!user.phone) user.phone = localStorage.getItem("userPhone") || "";
+      
+      // Debug: Log what we're reading from localStorage
+      console.log("Personal data from localStorage:", localStorage.getItem("personalData"));
+      console.log("Parsed user data:", user);
+      
+      // Ensure we have valid user data
+      if (!user.name || user.name === "Test User") {
+        user.name = localStorage.getItem("userName") || "Guest";
+        console.log("Using userName from localStorage:", user.name);
+      }
+      if (!user.phone || user.phone === "1234567890") {
+        user.phone = localStorage.getItem("userPhone") || "";
+        console.log("Using userPhone from localStorage:", user.phone);
+      }
+      
+      // Debug: Log final user data
+      console.log("Final user data being sent:", user);
 
       // Fix order/addOns structure
       let order = JSON.parse(localStorage.getItem("orderData") || '{}');
+      
       // Ensure order.items is an array of objects with id, name, quantity, price
       if (order.items && Array.isArray(order.items)) {
         order.items = order.items.map(item => ({
@@ -66,6 +82,7 @@ const Payment = () => {
       } else {
         order.items = [];
       }
+      
       // Convert addOns from {id: quantity} to array of objects
       if (order.addOns && typeof order.addOns === 'object' && !Array.isArray(order.addOns)) {
         const addOnDefs = [
@@ -89,22 +106,49 @@ const Payment = () => {
         order.addOns = [];
       }
 
-      const payment = paymentData;
       let seatNumber = localStorage.getItem("seatNumber");
-      const orderType = localStorage.getItem("orderType");
+      let orderType = localStorage.getItem("orderType");
+      
+      // Set default values if not present (for testing)
+      if (!orderType) {
+        orderType = "Pick Up"; // Default to Pick Up
+        localStorage.setItem("orderType", orderType);
+      }
+      
       // Only include seatNumber for Dine In
-      if (orderType !== 'Dine In') seatNumber = null;
-      const payload = { user, order, payment, seatNumber, orderType };
-      console.log("Sending payload to backend:", payload);
+      if (orderType !== 'Dine In') {
+        seatNumber = null;
+      } else if (!seatNumber) {
+        seatNumber = "A1"; // Default seat for Dine In
+        localStorage.setItem("seatNumber", seatNumber);
+      }
+      
+      // Prepare the order data in the correct structure for backend
+      const orderData = {
+        items: order.items,
+        addOns: order.addOns,
+        total: orderTotal,
+        orderType: orderType,
+        seatNumber: seatNumber
+      };
+      
+      const payload = { 
+        user, 
+        order: orderData, 
+        paymentTime: new Date().toISOString()
+      };
+      
+      console.log("Sending payment data to backend");
 
       try {
-        const res = await fetch("http://localhost:5001/transaction", {
+        const res = await fetch("/api/order/transaction", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
+        
         if (res.ok) {
-      navigate("/confirmation");
+          navigate("/confirmation");
         } else {
           alert("Failed to save transaction. Please try again.");
         }
@@ -113,6 +157,8 @@ const Payment = () => {
       }
     }
   };
+
+
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
@@ -177,6 +223,8 @@ const Payment = () => {
             Powered by
             <span className="text-blue-400 font-semibold">NOVA</span>
           </p>
+          
+
         </div>
       </div>
     </div>

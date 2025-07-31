@@ -109,7 +109,7 @@ export default function NovaAIChatbot() {
         const endpoint = endpointMap[text] || text;
 
         // Make API call to backend PDF generation endpoint
-        const response = await fetch(`http://localhost:5001/${endpoint}`, {
+        const response = await fetch(`/api/llm/${endpoint}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -152,7 +152,7 @@ export default function NovaAIChatbot() {
         setMessages(prev => [...prev, { from: "bot", text: "🤔 Let me check that for you..." }]);
 
         // Send question to backend AI endpoint
-        const response = await fetch("http://localhost:5001/ai-query", {
+        const response = await fetch("/api/llm/ai-query", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -166,7 +166,7 @@ export default function NovaAIChatbot() {
           // Remove loading message and add AI response
           setMessages(prev => {
             const newMessages = prev.slice(0, -1); // Remove loading message
-            return [...newMessages, { from: "bot", text: data.result }];
+            return [...newMessages, { from: "bot", text: data.response }];
           });
         } else {
           // Handle AI query error

@@ -14,7 +14,7 @@ Date: 2025
 import mysql.connector
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple
-from database import get_db
+from db import get_db
 
 def validate_user_data(user_data: Dict) -> Tuple[bool, str]:
     """
@@ -109,15 +109,15 @@ def insert_user(user_data: Dict) -> Tuple[Optional[int], str]:
         if existing_user:
             # Update existing user
             cursor.execute(
-                "UPDATE users SET name = %s, email = %s WHERE phone = %s",
-                (user_data['name'], user_data.get('email', ''), user_data['phone'])
+                "UPDATE users SET name = %s WHERE phone = %s",
+                (user_data['name'], user_data['phone'])
             )
             user_id = existing_user[0]
         else:
             # Insert new user
             cursor.execute(
-                "INSERT INTO users (name, phone, email) VALUES (%s, %s, %s)",
-                (user_data['name'], user_data['phone'], user_data.get('email', ''))
+                "INSERT INTO users (name, phone) VALUES (%s, %s)",
+                (user_data['name'], user_data['phone'])
             )
             user_id = cursor.lastrowid
         
@@ -301,4 +301,57 @@ def process_transaction(transaction_data: Dict) -> Dict:
         }
         
     except Exception as e:
-        return {"success": False, "error": f"Unexpected error: {str(e)}"} 
+        return {"success": False, "error": f"Unexpected error: {str(e)}"}
+
+# Flask App Setup
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/transaction', methods=['POST'])
+def transaction():
+    """
+    Process a new transaction from the kiosk frontend.
+    """
+    try:
+        # Get transaction data from request
+        transaction_data = request.get_json()
+        
+        if not transaction_data:
+            return jsonify({
+                "success": False,
+                "error": "No transaction data provided"
+            }), 400
+        
+        # Process the transaction using our service
+        result = process_transaction(transaction_data)
+        
+        if result["success"]:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": f"Transaction processing failed: {str(e)}"
+        }), 500
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint."""
+    return jsonify({
+        "status": "healthy",
+        "service": "order-service",
+        "port": 5002
+    })
+
+if __name__ == '__main__':
+    print("Starting Order Service...")
+    print("Service URL: http://localhost:5002")
+    print("Transaction Endpoint: http://localhost:5002/transaction")
+    print("Health Check: http://localhost:5002/health")
+    print("=" * 60)
+    app.run(host='0.0.0.0', port=5002, debug=True) 

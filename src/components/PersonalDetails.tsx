@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -8,9 +8,29 @@ const PersonalDetails = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
+  // Clear old data when component loads
+  useEffect(() => {
+    console.log("Clearing old personal data from localStorage");
+    localStorage.removeItem("personalData");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userPhone");
+  }, []);
+
   const handleContinue = () => {
+    // Clear any old data first
+    localStorage.removeItem("personalData");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userPhone");
+    
     const personalData = { name, phone };
+    console.log("Saving personal data:", personalData);
     localStorage.setItem("personalData", JSON.stringify(personalData));
+    console.log("Saved to localStorage:", localStorage.getItem("personalData"));
+    
+    // Also set individual fields as backup
+    localStorage.setItem("userName", name);
+    localStorage.setItem("userPhone", phone);
+    
     navigate("/payment");
   };
 
