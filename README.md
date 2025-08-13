@@ -1,10 +1,10 @@
-# 🍽️ Smart Kiosk System with AI Analytics
+# 🍽️ Smart Kiosk System with Analytics
 
-A modern restaurant kiosk application with AI-powered sales analytics, PDF report generation, and conversational chatbot functionality. Built with React frontend, Flask microservices, MySQL database, and Mistral LLM for AI features.
+A modern restaurant kiosk application with intelligent sales analytics, PDF report generation, and conversational assistant functionality. Built with React frontend, Flask microservices, MySQL database, and advanced analytics features.
 
 ## 🚀 Features
 
-- **🤖 AI-Powered Chatbot**: Natural language queries about sales data using Mistral LLM
+- **🤖 Intelligent Sales Assistant**: Natural language queries about sales data using advanced analytics
 - **📊 PDF Report Generation**: Daily, weekly, and monthly sales reports with detailed analytics
 - **🛒 Complete Kiosk System**: Menu browsing, ordering, payment processing, and user management
 - **📈 Real-time Analytics**: Live sales tracking, inventory management, and customer insights
@@ -52,7 +52,7 @@ A modern restaurant kiosk application with AI-powered sales analytics, PDF repor
 - **Git**: For cloning the repository
 
 ### Docker Memory Allocation (CRITICAL)
-**For Ollama/Mistral AI to work properly:**
+**For advanced analytics to work properly:**
 1. Open Docker Desktop
 2. Go to Settings → Resources → Memory
 3. **Set to at least 12GB** (16GB recommended)
@@ -79,21 +79,21 @@ chmod +x *.sh
 
 ### Step 3: Start Services
 
-#### Option A: Basic Mode (No AI - Recommended for Testing)
+#### Option A: Basic Mode (No Analytics - Recommended for Testing)
 ```bash
-# Start core services without Ollama/Mistral AI
+# Start core services without advanced analytics
 ./start-basic.sh
 ```
 
-#### Option B: Full AI Mode (Requires 12GB+ Docker Memory)
+#### Option B: Full Analytics Mode (Requires 12GB+ Docker Memory)
 ```bash
-# Start all services including Ollama/Mistral AI
+# Start all services including advanced analytics
 ./start.sh
 ```
 
 ### Step 4: Access the Application
 - **Frontend**: http://localhost:8081
-- **AI Chatbot**: Available in the frontend interface (bottom right corner)
+- **Sales Assistant**: Available in the frontend interface (bottom right corner)
 
 ### Step 5: Test Everything
 ```bash
@@ -107,28 +107,28 @@ chmod +x *.sh
 
 | Script | Purpose | When to Use |
 |--------|---------|-------------|
-| `start.sh` | Full startup with Ollama/Mistral AI | When you want full AI features |
-| `start-basic.sh` | Basic startup without AI | For testing or when you don't need AI |
+| `start.sh` | Full startup with advanced analytics | When you want full analytics features |
+| `start-basic.sh` | Basic startup without analytics | For testing or when you don't need analytics |
 | `check-docker.sh` | Check system requirements | Before starting services |
 | `test-services.sh` | Test all services | After startup to verify everything works |
 | `setup-ollama.sh` | Setup Ollama and Mistral model | Manual Ollama setup (rarely needed) |
 
 ### What Each Script Does
 
-#### `start.sh` - Full AI Startup
+#### `start.sh` - Full Analytics Startup
 - Starts all microservices (Auth, Menu, Order, Payment, LLM)
 - Starts MySQL database
-- Starts Ollama with Mistral model (requires 12GB+ Docker memory)
+- Starts Ollama with advanced models (requires 12GB+ Docker memory)
 - Starts React frontend with nginx
 - Waits for all services to be healthy
-- Downloads Mistral model automatically (5-10 minutes first time)
+- Downloads required models automatically (5-10 minutes first time)
 
 #### `start-basic.sh` - Basic Startup
 - Starts all microservices (Auth, Menu, Order, Payment, LLM)
 - Starts MySQL database
 - Starts React frontend with nginx
-- **Skips Ollama/Mistral AI** (faster startup, less memory)
-- AI chatbot will use basic responses instead of Mistral
+- **Skips advanced analytics** (faster startup, less memory)
+- Sales assistant will use basic responses instead of advanced analytics
 
 #### `check-docker.sh` - System Check
 - Verifies Docker is installed and running
@@ -140,14 +140,14 @@ chmod +x *.sh
 - Tests database connectivity
 - Tests all microservices (health checks)
 - Tests frontend accessibility
-- Tests AI chatbot functionality
+- Tests sales assistant functionality
 - Tests PDF report generation
 - Provides summary of what's working/not working
 
-#### `setup-ollama.sh` - Manual Ollama Setup
+#### `setup-ollama.sh` - Manual Analytics Setup
 - Waits for Ollama service to be ready
-- Checks if Mistral model is available
-- Downloads Mistral model if not present
+- Checks if required models are available
+- Downloads required models if not present
 - Verifies model installation
 - Lists available models
 - **Note**: This script is automatically called by `start.sh`
@@ -161,14 +161,14 @@ chmod +x *.sh
 | Menu Service | 5003 | Menu management | ✅ Working | `curl http://localhost:5003/health` |
 | Order Service | 5002 | Order processing | ✅ Working | `curl http://localhost:5002/health` |
 | Payment Service | 5006 | Payment processing | ✅ Working | `curl http://localhost:5006/health` |
-| LLM Service | 5005 | AI chatbot & reports | ✅ Working | `curl http://localhost:5005/health` |
+| LLM Service | 5005 | Sales assistant & reports | ✅ Working | `curl http://localhost:5005/health` |
 | MySQL | 3307 | Database | ✅ Working | `docker exec kiosk-mysql mysql -u root -padmin123 -e "SELECT 1;"` |
-| Ollama | 11434 | Mistral LLM | ⚠️ Needs 12GB+ RAM | `curl http://localhost:11434/api/tags` |
+| Ollama | 11434 | Advanced Analytics | ⚠️ Needs 12GB+ RAM | `curl http://localhost:11434/api/tags` |
 
-## 🤖 AI Features
+## 🤖 Intelligent Features
 
-### Chatbot Capabilities
-The AI chatbot can answer questions about:
+### Assistant Capabilities
+The sales assistant can answer questions about:
 - **📊 Sales Analytics**: Revenue, best-selling items, customer spending
 - **📦 Inventory**: Stock levels, popular items, trends
 - **👥 Customer Insights**: Customer behavior, preferences
@@ -212,7 +212,7 @@ The AI chatbot can answer questions about:
 4. **Personal Details**: Enter name and phone number
 5. **Payment**: Choose payment method and complete transaction
 6. **Confirmation**: Receive order confirmation and receipt
-7. **AI Chatbot**: Ask questions about sales and generate reports
+7. **Sales Assistant**: Ask questions about sales and generate reports
 
 ### Database Features
 - **User Management**: Store customer information
@@ -220,12 +220,12 @@ The AI chatbot can answer questions about:
 - **Inventory Tracking**: Monitor item sales
 - **Analytics**: Real-time sales data
 
-## 🔧 Ollama Setup (For Full AI Features)
+## 🔧 Ollama Setup (For Full Analytics Features)
 
 ### Prerequisites
 1. **Docker Memory**: Must be set to 12GB+ in Docker Desktop
 2. **System RAM**: At least 16GB total system memory
-3. **Storage**: 5-10GB free space for Mistral model
+3. **Storage**: 5-10GB free space for analytics models
 
 ### Setup Steps
 1. **Increase Docker Memory**:
@@ -241,7 +241,7 @@ The AI chatbot can answer questions about:
 
 3. **Wait for Model Download**:
    - First startup takes 5-10 minutes
-   - Mistral model (~4GB) will be downloaded automatically
+   - Analytics models (~4GB) will be downloaded automatically
    - Monitor progress: `docker-compose logs ollama`
 
 4. **Verify Setup**:
@@ -264,7 +264,7 @@ kiosk-app/
 │   ├── menu-service/        # Menu management (Flask)
 │   ├── order-service/       # Order processing (Flask)
 │   ├── payment-service/     # Payment handling (Flask)
-│   └── llm-service/         # AI chatbot & reports (Flask)
+│   └── llm-service/         # Sales assistant & reports (Flask)
 ├── src/                     # React frontend
 │   ├── components/          # React components
 │   │   ├── Home.tsx        # Landing page
@@ -273,7 +273,7 @@ kiosk-app/
 │   │   ├── PersonalDetails.tsx # User info form
 │   │   ├── Payment.tsx     # Payment processing
 │   │   ├── Confirmation.tsx # Order confirmation
-│   │   └── NovaAIChatbot.tsx # AI chatbot interface
+│   │   └── NovaAIChatbot.tsx # Sales assistant interface
 │   └── ...
 ├── frontend/                # Nginx configuration
 ├── docker-compose.yml       # Service orchestration
@@ -309,7 +309,7 @@ curl -X POST http://localhost:5005/generate-daily-report
 curl -X POST http://localhost:5005/generate-weekly-report
 curl -X POST http://localhost:5005/generate-monthly-report
 
-# Test AI chatbot
+# Test sales assistant
 curl -X POST http://localhost:5005/ai-query \
   -H "Content-Type: application/json" \
   -d '{"question": "hello"}'
@@ -329,8 +329,8 @@ curl -X POST http://localhost:5002/transaction \
 ### Frontend Testing
 1. **Open**: http://localhost:8081
 2. **Complete Order Flow**: Home → Menu → Cart → Personal Details → Payment → Confirmation
-3. **Test AI Chatbot**: Click chatbot icon (bottom right) and try queries
-4. **Generate Reports**: Use quick action buttons in chatbot
+3. **Test Sales Assistant**: Click assistant icon (bottom right) and try queries
+4. **Generate Reports**: Use quick action buttons in sales assistant
 
 ## 🚨 Troubleshooting
 
@@ -393,7 +393,7 @@ docker exec kiosk-mysql mysql -u root -padmin123 -e "USE kiosk; SELECT COUNT(*) 
 curl -X POST http://localhost:5005/generate-daily-report
 ```
 
-#### 6. AI Chatbot Not Working
+#### 6. Sales Assistant Not Working
 ```bash
 # Check if Ollama is running
 docker-compose ps ollama
@@ -467,7 +467,7 @@ htop  # if available
 # Basic startup (recommended for testing)
 ./start-basic.sh
 
-# Full startup with AI (requires 12GB+ Docker memory)
+# Full startup with analytics (requires 12GB+ Docker memory)
 ./start.sh
 
 # Test everything
@@ -486,11 +486,11 @@ docker-compose logs -f
 ### Access Points
 - **Frontend**: http://localhost:8081
 - **Database**: localhost:3307 (root/admin123)
-- **AI Chatbot**: Available in frontend (bottom right corner)
+- **Sales Assistant**: Available in frontend (bottom right corner)
 
 ### Important Notes
-- **First startup with Ollama** may take 5-10 minutes due to Mistral model download
-- **Docker memory** must be 12GB+ for full AI features
+- **First startup with Ollama** may take 5-10 minutes due to analytics model download
+- **Docker memory** must be 12GB+ for full analytics features
 - **All services** are containerized and will start automatically
 - **Database** is persistent and will retain data between restarts
 - **Frontend** uses nginx for serving and API proxying
@@ -500,3 +500,4 @@ docker-compose logs -f
 **🎉 Your Smart Kiosk System is ready to use!**
 
 For questions or issues, check the troubleshooting section or open an issue on GitHub.
+# kiosk-ai
