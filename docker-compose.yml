@@ -42,8 +42,8 @@ services:
   # ANALYTICS SERVICE (OLLAMA)
   # =============================================================================
   # Ollama provides local analytics processing for the chatbot:
-  # - Runs Phi-2 model for natural language processing (optimized for t3.large)
-  # - Requires moderate memory (4GB+ recommended)
+  # - Runs Phi-3 Mini model for natural language processing (optimized for speed)
+  # - Requires minimal memory (2GB+ recommended)
   # - Automatically downloads required models on first startup
   # =============================================================================
   ollama:
@@ -53,9 +53,9 @@ services:
       - "11434:11434"  # Ollama API endpoint
     volumes:
       - ollama_data:/root/.ollama  # Persistent model storage
-    mem_limit: 4g      # Reduced memory allocation for t3.large
-    mem_reservation: 2g # Reduced memory reservation
-    shm_size: 2g        # Reduced shared memory for model loading
+    mem_limit: 2g      # Reduced memory allocation for speed
+    mem_reservation: 1g # Reduced memory reservation
+    shm_size: 1g        # Reduced shared memory for faster loading
     networks:
       - kiosk-network
 

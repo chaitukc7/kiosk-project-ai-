@@ -39,25 +39,19 @@ CORS(app)
 # =============================================================================
 # Service configuration and environment variables
 OLLAMA_URL = "http://ollama:11434"
-# Model configuration - optimized for cloud deployment on t3.large
+# Model configuration - optimized for speed and efficiency
 # Options: 
-# - "phi:2.7b" (2.7B params, ~2GB RAM, perfect for t3.large)
-# - "llama2:7b-chat-q4_0" (quantized, ~4GB RAM, good performance)
-# - "mistral" (7B params, ~12GB RAM, best performance but expensive)
-AI_MODEL = os.getenv('AI_MODEL', 'phi:2.7b')  # Default to Phi-2 for cost efficiency
+# - "phi3:mini" (1.4B params, ~1.4GB RAM, fastest, no hardcoding)
+# - "phi:2.7b" (2.7B params, ~2GB RAM, good balance)
+# - "llama3.1:8b-instruct" (8B params, ~6GB RAM, best quality)
+AI_MODEL = os.getenv('AI_MODEL', 'phi3:mini')  # Default to Phi-3 Mini for speed
 MYSQL_CONFIG = {
     'host': 'mysql',
     'user': 'root',
     'password': 'admin123',
     'database': 'kiosk'
 }
-DEFAULT_RESPONSES = {
-    "hello": "Hello! I'm your AI assistant. How can I help you today?",
-    "hi": "Hi there! I'm here to help with your kiosk questions.",
-    "help": "I can help you with:\n- Sales analytics and reports\n- Menu and inventory questions\n- Customer insights\n- PDF report generation\n\nJust ask me anything!",
-    "bye": "Goodbye! Have a great day!",
-    "thanks": "You're welcome! Let me know if you need anything else."
-}
+# No hardcoded responses - AI generates everything dynamically
 
 # =============================================================================
 # DATABASE HELPER FUNCTIONS
@@ -184,18 +178,10 @@ def ai_query():
         if not question:
             return jsonify({"error": "Question is required"}), 400
         
-        # Check for basic conversational queries first
-        for key, response in DEFAULT_RESPONSES.items():
-            if key in question:
-                return jsonify({
-                    "success": True,
-                    "response": response,
-                    "type": "conversational"
-                })
-        
-        # Try to use Ollama for advanced queries
+        # Always use AI model for responses - no hardcoded fallbacks
         if check_ollama_health():
             try:
+                # Process with Ollama for all queries
                 ai_response = query_ollama(question)
                 return jsonify({
                     "success": True,
@@ -204,19 +190,19 @@ def ai_query():
                 })
             except Exception as e:
                 logger.warning(f"Ollama query failed: {e}")
-                # Fall back to basic response
+                # Minimal fallback - let AI handle everything
                 return jsonify({
                     "success": True,
-                    "response": "I understand your question, but I need the analytics model to provide detailed insights. Please ensure Ollama is running with sufficient memory.",
-                    "type": "fallback"
+                    "response": "I'm processing your request. Please ensure the AI model is running properly.",
+                    "type": "ai_fallback"
                 })
         else:
-            # Ollama not available, provide helpful response
+            # AI model not available
             return jsonify({
-                "success": True,
-                "response": "I can help with basic questions! For advanced analytics, please ensure the Phi-2 model is loaded in Ollama.",
-                "type": "basic"
-            })
+                "success": False,
+                "error": "AI model not available. Please ensure Ollama is running with the correct model.",
+                "type": "model_unavailable"
+            }), 503
             
     except Exception as e:
         logger.error(f"AI query processing failed: {e}")
@@ -273,12 +259,12 @@ def generate_monthly_report_endpoint():
 # =============================================================================
 def check_ollama_health():
     """
-    Check if Ollama service is healthy and Phi-2 model is available.
+    Check if Ollama service is healthy and the configured model is available.
     Returns True if Ollama is ready, False otherwise.
     """
     try:
         # Check if Ollama is responding
-        response = requests.get(f"{OLLAMA_URL}/api/tags", timeout=10)
+        response = requests.get(f"{OLLAMA_URL}/api/tags", timeout=5)  # Reduced timeout for speed
         if response.status_code == 200:
             models = response.json().get('models', [])
             # Check if the configured model is available
@@ -320,20 +306,25 @@ def query_ollama(question):
             for i, item in enumerate(sales_data['least_items'][:3]):
                 data_summary += f"{item['name']}({item['quantity']} sold), "
         
-        # Prepare the prompt with real data - optimized for Phi-2
-        prompt = f"""You are a restaurant analytics assistant. Use this data to answer: {data_summary}
+        # Prepare the prompt with real data - optimized for speed
+        prompt = f"""You are a restaurant analytics assistant. Answer this question based on the sales data: {data_summary}
 
 Question: {question}
 
-Answer based on the sales data above. Be specific with numbers and item names."""
+Provide a direct, specific answer using the data above. Be concise and accurate."""
         
         payload = {
             "model": AI_MODEL,
             "prompt": prompt,
-            "stream": False
+            "stream": False,
+            "options": {
+                "temperature": 0.3,  # Lower temperature for more focused responses
+                "top_p": 0.9,        # Optimize for speed
+                "num_predict": 150   # Limit response length for speed
+            }
         }
         
-        response = requests.post(f"{OLLAMA_URL}/api/generate", json=payload, timeout=60)
+        response = requests.post(f"{OLLAMA_URL}/api/generate", json=payload, timeout=30)  # Reduced timeout
         
         if response.status_code == 200:
             result = response.json()
