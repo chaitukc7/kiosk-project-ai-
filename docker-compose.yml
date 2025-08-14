@@ -5,7 +5,7 @@
 # - Database (MySQL) for data persistence
 # - Backend services (Flask) for business logic
 # - Frontend (React + Nginx) for user interface
-# - AI service (Ollama) for Mistral LLM integration
+# - Analytics service for intelligent data processing
 # =============================================================================
 
 services:
@@ -39,12 +39,12 @@ services:
       start_period: 30s
 
   # =============================================================================
-  # OLLAMA AI SERVICE (MISTRAL LLM)
+  # ANALYTICS SERVICE (OLLAMA)
   # =============================================================================
-  # Ollama provides local LLM inference for the AI chatbot:
-  # - Runs Mistral 7B model for natural language processing
-  # - Requires significant memory (12GB+ recommended)
-  # - Automatically downloads Mistral model on first startup
+  # Ollama provides local analytics processing for the chatbot:
+  # - Runs Phi-2 model for natural language processing (optimized for t3.large)
+  # - Requires moderate memory (4GB+ recommended)
+  # - Automatically downloads required models on first startup
   # =============================================================================
   ollama:
     image: ollama/ollama:latest
@@ -53,9 +53,9 @@ services:
       - "11434:11434"  # Ollama API endpoint
     volumes:
       - ollama_data:/root/.ollama  # Persistent model storage
-    mem_limit: 12g      # Maximum memory allocation
-    mem_reservation: 8g # Guaranteed memory reservation
-    shm_size: 4g        # Shared memory for model loading
+    mem_limit: 4g      # Reduced memory allocation for t3.large
+    mem_reservation: 2g # Reduced memory reservation
+    shm_size: 2g        # Reduced shared memory for model loading
     networks:
       - kiosk-network
 

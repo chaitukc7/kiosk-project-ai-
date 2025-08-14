@@ -3,8 +3,8 @@
 # =============================================================================
 # SMART KIOSK SYSTEM - BASIC STARTUP SCRIPT
 # =============================================================================
-# This script starts all core services WITHOUT Ollama/Mistral AI.
-# Use this for basic kiosk functionality when you don't need AI features.
+# This script starts all core services WITHOUT Ollama analytics.
+# Use this for basic kiosk functionality when you don't need analytics features.
 # 
 # PREREQUISITES:
 # - Docker Desktop with 4GB+ memory allocated
@@ -17,12 +17,12 @@
 # - All microservices with health checks
 # 
 # FEATURES NOT AVAILABLE:
-# - Advanced AI queries about sales data
+# - Advanced analytics queries about sales data
 # - Natural language processing
-# - Complex analytics through AI
+# - Complex analytics through advanced models
 # =============================================================================
 
-echo "🚀 Starting Smart Kiosk System (Basic Mode - No AI)..."
+echo "🚀 Starting Smart Kiosk System (Basic Mode - No Analytics)..."
 echo "======================================================"
 
 # Check if Docker is running
@@ -68,17 +68,17 @@ echo "📝 Features Available:"
 echo "- ✅ User authentication and registration"
 echo "- ✅ Menu browsing and ordering"
 echo "- ✅ Payment processing"
-echo "- ✅ Basic AI chatbot responses (hello, help, etc.)"
+echo "- ✅ Basic sales assistant responses (hello, help, etc.)"
 echo "- ✅ PDF report generation (daily/weekly/monthly)"
 echo "- ✅ Transaction management"
 echo "- ✅ Complete kiosk workflow"
 echo ""
 echo "📝 Features NOT Available (requires Ollama):"
-echo "- ❌ Advanced AI queries about sales data"
+echo "- ❌ Advanced analytics queries about sales data"
 echo "- ❌ Natural language processing"
-echo "- ❌ Complex analytics through AI"
+echo "- ❌ Complex analytics through advanced models"
 echo ""
-echo "💡 To enable full AI features:"
+echo "💡 To enable full analytics features:"
 echo "1. Increase Docker memory to 12GB+ in Docker Desktop"
 echo "2. Run: ./start.sh"
-echo "3. Wait 5-10 minutes for Mistral model download" 
+echo "3. Wait 5-10 minutes for analytics model download" 

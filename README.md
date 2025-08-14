@@ -55,7 +55,7 @@ A modern restaurant kiosk application with intelligent sales analytics, PDF repo
 **For advanced analytics to work properly:**
 1. Open Docker Desktop
 2. Go to Settings → Resources → Memory
-3. **Set to at least 12GB** (16GB recommended)
+3. **Set to at least 4GB** (8GB recommended for better performance)
 4. Click Apply & Restart
 5. Wait for Docker to restart completely
 
@@ -85,7 +85,7 @@ chmod +x *.sh
 ./start-basic.sh
 ```
 
-#### Option B: Full Analytics Mode (Requires 12GB+ Docker Memory)
+#### Option B: Full Analytics Mode (Requires 4GB+ Docker Memory)
 ```bash
 # Start all services including advanced analytics
 ./start.sh
@@ -107,28 +107,28 @@ chmod +x *.sh
 
 | Script | Purpose | When to Use |
 |--------|---------|-------------|
-| `start.sh` | Full startup with advanced analytics | When you want full analytics features |
+| `start.sh` | Full startup with Phi-2 analytics | When you want full analytics features |
 | `start-basic.sh` | Basic startup without analytics | For testing or when you don't need analytics |
 | `check-docker.sh` | Check system requirements | Before starting services |
 | `test-services.sh` | Test all services | After startup to verify everything works |
-| `setup-ollama.sh` | Setup Ollama and Mistral model | Manual Ollama setup (rarely needed) |
+| `setup-ollama.sh` | Setup Ollama and Phi-2 model | Manual Ollama setup (rarely needed) |
 
 ### What Each Script Does
 
 #### `start.sh` - Full Analytics Startup
 - Starts all microservices (Auth, Menu, Order, Payment, LLM)
 - Starts MySQL database
-- Starts Ollama with advanced models (requires 12GB+ Docker memory)
+- Starts Ollama with Phi-2 model (requires 4GB+ Docker memory)
 - Starts React frontend with nginx
 - Waits for all services to be healthy
-- Downloads required models automatically (5-10 minutes first time)
+- Downloads Phi-2 model automatically (3-5 minutes first time)
 
 #### `start-basic.sh` - Basic Startup
 - Starts all microservices (Auth, Menu, Order, Payment, LLM)
 - Starts MySQL database
 - Starts React frontend with nginx
 - **Skips advanced analytics** (faster startup, less memory)
-- Sales assistant will use basic responses instead of advanced analytics
+- Sales assistant will use basic responses instead of Phi-2
 
 #### `check-docker.sh` - System Check
 - Verifies Docker is installed and running
@@ -223,15 +223,15 @@ The sales assistant can answer questions about:
 ## 🔧 Ollama Setup (For Full Analytics Features)
 
 ### Prerequisites
-1. **Docker Memory**: Must be set to 12GB+ in Docker Desktop
-2. **System RAM**: At least 16GB total system memory
-3. **Storage**: 5-10GB free space for analytics models
+1. **Docker Memory**: Must be set to 4GB+ in Docker Desktop
+2. **System RAM**: At least 8GB total system memory
+3. **Storage**: 2-4GB free space for Phi-2 model
 
 ### Setup Steps
 1. **Increase Docker Memory**:
    - Open Docker Desktop
    - Settings → Resources → Memory
-   - Set to 12GB or higher
+   - Set to 4GB or higher
    - Apply & Restart
 
 2. **Start with Ollama**:
@@ -240,8 +240,8 @@ The sales assistant can answer questions about:
    ```
 
 3. **Wait for Model Download**:
-   - First startup takes 5-10 minutes
-   - Analytics models (~4GB) will be downloaded automatically
+   - First startup takes 3-5 minutes
+   - Phi-2 model (~1.5GB) will be downloaded automatically
    - Monitor progress: `docker-compose logs ollama`
 
 4. **Verify Setup**:
@@ -339,10 +339,10 @@ curl -X POST http://localhost:5002/transaction \
 #### 1. Out of Memory Error
 ```bash
 # Error: "Out of memory" or "Cannot allocate memory"
-# Solution: Increase Docker memory to 12GB+
+# Solution: Increase Docker memory to 4GB+
 ```
 - Open Docker Desktop → Settings → Resources → Memory
-- Set to 12GB or higher
+- Set to 4GB or higher
 - Apply & Restart
 
 #### 2. Services Not Starting
@@ -489,8 +489,8 @@ docker-compose logs -f
 - **Sales Assistant**: Available in frontend (bottom right corner)
 
 ### Important Notes
-- **First startup with Ollama** may take 5-10 minutes due to analytics model download
-- **Docker memory** must be 12GB+ for full analytics features
+- **First startup with Ollama** may take 3-5 minutes due to Phi-2 model download
+- **Docker memory** must be 4GB+ for full analytics features
 - **All services** are containerized and will start automatically
 - **Database** is persistent and will retain data between restarts
 - **Frontend** uses nginx for serving and API proxying

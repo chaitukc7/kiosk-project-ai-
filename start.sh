@@ -3,21 +3,21 @@
 # =============================================================================
 # SMART KIOSK SYSTEM - FULL STARTUP SCRIPT
 # =============================================================================
-# This script starts all services including Ollama/Mistral AI for full functionality.
+# This script starts all services including Ollama for full functionality.
 # 
 # PREREQUISITES:
-# - Docker Desktop with 12GB+ memory allocated
-# - At least 16GB system RAM
-# - 5-10GB free disk space for Mistral model
+# - Docker Desktop with 4GB+ memory allocated (optimized for t3.large)
+# - At least 8GB system RAM
+# - 2-4GB free disk space for Phi-2 model
 # 
 # FEATURES ENABLED:
 # - Complete kiosk functionality
-# - AI chatbot with natural language processing
+# - Sales assistant with natural language processing
 # - PDF report generation
 # - All microservices with health checks
 # =============================================================================
 
-echo "🚀 Starting Smart Kiosk System with Full AI Features..."
+echo "🚀 Starting Smart Kiosk System with Full Analytics Features..."
 echo "================================================================"
 
 # Check if Docker is running
@@ -52,20 +52,20 @@ else
     sleep 10
 fi
 
-# Wait for Ollama to start and pull Mistral model
-echo "🤖 Setting up Ollama and Mistral model..."
-echo "📥 This may take 5-10 minutes on first run..."
-echo "⚠️  Ensure Docker has at least 12GB memory allocated!"
+# Wait for Ollama to start and pull Phi-2 model
+echo "🤖 Setting up Ollama and Phi-2 model..."
+echo "📥 This may take 3-5 minutes on first run..."
+echo "⚠️  Ensure Docker has at least 4GB memory allocated!"
 sleep 30
 
-# Check if Mistral model is available
-echo "🔍 Checking Mistral model availability..."
+# Check if Phi-2 model is available
+echo "🔍 Checking Phi-2 model availability..."
 for i in {1..20}; do
-    if curl -s http://localhost:11434/api/tags | grep -q "mistral"; then
-        echo "✅ Mistral model is ready"
+    if curl -s http://localhost:11434/api/tags | grep -q "phi"; then
+        echo "✅ Phi-2 model is ready"
         break
     else
-        echo "⏳ Waiting for Mistral model... (attempt $i/20)"
+        echo "⏳ Waiting for Phi-2 model... (attempt $i/20)"
         sleep 30
     fi
 done
@@ -94,7 +94,7 @@ for service in "${services[@]}"; do
 done
 
 echo ""
-echo "✅ Smart Kiosk System is now running with full AI features!"
+echo "✅ Smart Kiosk System is now running with full analytics features!"
 echo ""
 echo "🌐 Frontend: http://localhost:8081"
 echo "🔐 Auth Service: http://localhost:5004"
@@ -103,19 +103,19 @@ echo "📦 Order Service: http://localhost:5002"
 echo "💳 Payment Service: http://localhost:5006"
 echo "🤖 LLM Service: http://localhost:5005"
 echo "🗄️  Database: localhost:3307"
-echo "🤖 Ollama (Mistral): http://localhost:11434"
+echo "🤖 Ollama (Analytics): http://localhost:11434"
 echo ""
 echo "📝 To view logs: docker-compose logs -f [service-name]"
 echo "🛑 To stop: docker-compose down"
 echo ""
-echo "🎯 AI Features Available:"
+echo "🎯 Analytics Features Available:"
 echo "- Natural language queries about sales data"
 echo "- PDF report generation (daily, weekly, monthly)"
-echo "- Conversational chatbot responses"
+echo "- Conversational assistant responses"
 echo "- Advanced analytics and insights"
 echo ""
 echo "💡 Tips:"
-echo "- First startup may take 5-10 minutes due to Mistral model download"
-echo "- AI responses may be slow initially as the model loads"
+echo "- First startup may take 3-5 minutes due to Phi-2 model download"
+echo "- Analytics responses may be slow initially as the model loads"
 echo "- Check logs if any service fails to start"
-echo "- For optimal performance, ensure Docker has 12GB+ memory" 
+echo "- For optimal performance, ensure Docker has 4GB+ memory" 

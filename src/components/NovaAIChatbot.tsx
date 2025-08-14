@@ -1,11 +1,11 @@
 // =============================================================================
-// NOVA AI CHATBOT COMPONENT
+// SALES ASSISTANT CHATBOT COMPONENT
 // =============================================================================
-// This React component provides an AI-powered chatbot interface for the kiosk app.
+// This React component provides a chatbot interface for the kiosk app.
 // Features:
 // - Natural language queries about sales data
 // - PDF report generation and download
-// - Real-time communication with Mistral LLM via backend
+// - Real-time communication with backend services
 // - User-friendly interface with quick action buttons
 // =============================================================================
 
@@ -18,7 +18,7 @@ import { MessageSquare, BarChart3, TrendingUp, TrendingDown, Calendar, Clock, X 
 // Predefined buttons for common queries and report generation
 // Each option has a label, icon, value (query text), and optional type
 const quickOptions = [
-  // AI Query Options - These send natural language questions to the LLM
+  // Query Options - These send natural language questions to the backend
   { 
     label: "Best Selling Item", 
     icon: <TrendingUp className="w-4 h-4 mr-1" />, 
@@ -64,7 +64,7 @@ export default function NovaAIChatbot() {
   
   // Stores all chat messages (both user and bot messages)
   const [messages, setMessages] = useState([
-    { from: "bot", text: "Hi! I'm nova.ai. How can I help you with your sales & inventory today?" }
+    { from: "bot", text: "Hi! I'm your sales assistant. How can I help you with your sales & inventory today?" }
   ]);
   
   // Current input text in the chat input field
@@ -144,14 +144,14 @@ export default function NovaAIChatbot() {
         }
       } else {
         // =============================================================================
-        // AI QUERY PROCESSING
+        // QUERY PROCESSING
         // =============================================================================
-        // Regular AI query - send natural language question to LLM
+        // Regular query - send natural language question to backend
         
         // Show loading message
         setMessages(prev => [...prev, { from: "bot", text: "🤔 Let me check that for you..." }]);
 
-        // Send question to backend AI endpoint
+        // Send question to backend endpoint
         const response = await fetch("/api/llm/ai-query", {
           method: "POST",
           headers: {
@@ -163,13 +163,13 @@ export default function NovaAIChatbot() {
         const data = await response.json();
 
         if (data.success) {
-          // Remove loading message and add AI response
+          // Remove loading message and add response
           setMessages(prev => {
             const newMessages = prev.slice(0, -1); // Remove loading message
             return [...newMessages, { from: "bot", text: data.response }];
           });
         } else {
-          // Handle AI query error
+          // Handle query error
           setMessages(prev => {
             const newMessages = prev.slice(0, -1); // Remove loading message
             return [...newMessages, { from: "bot", text: `Sorry, I encountered an error: ${data.error}` }];
@@ -207,7 +207,7 @@ export default function NovaAIChatbot() {
           className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-full shadow-lg hover:bg-orange-600 transition-all"
         >
           <MessageSquare className="w-5 h-5" />
-          Chat with nova.ai
+          Sales Assistant
         </button>
       ) : (
         // =============================================================================
@@ -219,15 +219,15 @@ export default function NovaAIChatbot() {
               HEADER SECTION
               ============================================================================= */}
           <div className="flex items-center gap-3 p-4 bg-gradient-to-b from-slate-900 to-slate-800 border-b border-slate-800">
-            {/* AI Avatar */}
+            {/* Assistant Avatar */}
             <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white text-lg font-bold shadow">
-              <span>🤖</span>
+              <span>💬</span>
             </div>
             
             {/* Chatbot Info */}
             <div>
-              <div className="font-bold text-orange-400 text-lg">nova.ai</div>
-              <div className="text-xs text-slate-400">AI Sales Assistant</div>
+              <div className="font-bold text-orange-400 text-lg">Sales Assistant</div>
+              <div className="text-xs text-slate-400">Your Business Helper</div>
             </div>
             
             {/* Close Button */}
@@ -250,9 +250,9 @@ export default function NovaAIChatbot() {
                     : "flex items-end justify-end" // User messages aligned right
                 }
               >
-                {/* Bot avatar (only for bot messages) */}
+                {/* Assistant avatar (only for assistant messages) */}
                 {msg.from === "bot" && (
-                  <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white">🤖</div>
+                  <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white">💬</div>
                 )}
                 
                 {/* Message bubble */}
@@ -274,7 +274,7 @@ export default function NovaAIChatbot() {
                 ============================================================================= */}
             {isLoading && (
               <div className="flex items-start gap-2">
-                <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white">🤖</div>
+                <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white">💬</div>
                 <div className="px-4 py-2 rounded-xl bg-slate-800 text-white">
                   {/* Animated bouncing dots */}
                   <div className="flex space-x-1">
